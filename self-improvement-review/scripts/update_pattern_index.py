@@ -33,6 +33,21 @@ def parse_pattern_frontmatter(file_path: Path) -> dict:
     return {}
 
 
+def is_pattern_topic_file(f: Path) -> bool:
+    """Check if file is a pattern topic file (not index or meta)."""
+    # Skip index and meta files
+    skip_names = {"PATTERN_INDEX.md", "README.md"}
+    if f.name in skip_names:
+        return False
+    # Check frontmatter type
+    fm = parse_pattern_frontmatter(f)
+    fm_type = fm.get("type", "")
+    # Skip pattern_index type files
+    if fm_type == "pattern_index":
+        return False
+    return True
+
+
 def scan_patterns(patterns_dir: Path) -> dict:
     """Scan patterns directory and return JSON summary."""
     result = {
@@ -52,7 +67,8 @@ def scan_patterns(patterns_dir: Path) -> dict:
         result["warnings"].append(f"Patterns path is not a directory: {patterns_dir}")
         return result
 
-    pattern_files = sorted([f for f in patterns_dir.iterdir() if f.is_file() and f.suffix == ".md"])
+    all_md_files = [f for f in patterns_dir.iterdir() if f.is_file() and f.suffix == ".md"]
+    pattern_files = sorted([f for f in all_md_files if is_pattern_topic_file(f)])
     result["pattern_count"] = len(pattern_files)
 
     for f in pattern_files:
