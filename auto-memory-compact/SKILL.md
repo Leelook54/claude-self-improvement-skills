@@ -47,3 +47,4 @@ description: Review and compact Claude Code auto memory and local self-improveme
 
 - `scripts/inspect_memory.py` — Inspect memory structure (supports v0.2 checks)
 - `scripts/generate_dashboard.py` — Generate dashboard markdown (dry-run by default)
+- `scripts/retention_audit.py` — Read-only audit for file accumulation and overwrite risk
