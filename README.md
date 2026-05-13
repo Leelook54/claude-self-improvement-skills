@@ -1,232 +1,398 @@
 # Claude Self-Improvement Skills
 
-## 项目定位
+## 1. 项目定位
 
-这是一个用于维护 Claude Code 自改进记忆系统的 skill 定义仓库。
+本仓库是 Claude Code self-improvement memory system 的 skill 定义仓库。
 
-本仓库只包含两个 Claude Code skills：
-- `auto-memory-compact`
-- `self-improvement-review`
+**职责范围：**
+- 保存两个 skill 本体（`auto-memory-compact` 和 `self-improvement-review`）
+- 版本化管理 skill 定义
 
-本仓库不是完整的 memory 仓库，不保存运行期证据，不保存用户 memory records，不保存 hook 日志，不保存 settings 或 `CLAUDE.md`。
+**不在本仓库：**
+- Runtime evidence（运行产物位于 `~/.claude/memory/`）
+- `records/`、`archive/`、`inbox/`、`compact/`
+- `settings.json` / `CLAUDE.md`
+- Hook logs
+- Claude Code official auto memory
 
-运行产物都应落在 `~/.claude/memory/`，而不是提交到本仓库。
+本仓库**不自动修改** `CLAUDE.md`，**不自动修改** Claude Code official auto memory。
 
-## 为什么需要这个仓库
+## 2. 当前版本状态
 
-日常纠错、工具失败、阶段总结不适合直接写入全局 `CLAUDE.md`。全局 `CLAUDE.md` 是默认加载层，内容过多会增加 token 开启成本、降低缓存命中稳定性，并可能导致 agent 幻觉增加和行为漂移。
+| 字段 | 值 |
+|------|---|
+| 当前版本 | v0.2 |
+| 状态 | 结构稳定，已通过 smoke test，进入真实使用观察期 |
 
-Skill 更适合承载多步骤流程、检查清单、review 逻辑和 compact 逻辑。把复杂策略放进 skill，可以把默认 prompt 前缀保持得更短、更稳定，也更容易做 cache hygiene。
+**已完成：**
+- schema / policy references
+- v0.2 runtime structure
+- candidates path
+- pattern index
+- dashboard
+- compact policy
+- retention audit
+- archive index summary
+- smoke test
 
-Runtime evidence 应放在 `~/.claude/memory/`，而不是放在 skill 仓库中。本仓库的职责只是版本化 skill 本体，便于维护、回滚、同步和复用。
+**观察项：**
+- H2 tail-noise 仍可能增长
+- `records/errors` 超过阈值（> 30）后再 compact
+- session transcript deep review 尚未启用，仅 discovery
 
-另外，本仓库不自动写 `CLAUDE.md`。promotion candidate 只是建议，不是 apply；要真正进入全局或项目规则层，必须由用户单独明确批准。
+## 3. Skill 总览
 
-## 当前系统分层
+| Skill | 路径 | 主要职责 | 输出目标 |
+|---|---|---|---|
+| auto-memory-compact | `auto-memory-compact/` | memory 结构检查、compact policy、dashboard、retention audit、archive index | `~/.claude/memory/compact/`、`archive/summaries/`、`dashboard` |
+| self-improvement-review | `self-improvement-review/` | review 证据、pattern lifecycle、候选项、session discovery、promotion policy | `~/.claude/memory/records/reviews/`、`patterns/`、`candidates/` |
 
-| 层级 | 路径 | 是否默认加载 | 职责 |
-|---|---|---:|---|
-| Skill 定义层 | `~/.claude/skills/auto-memory-compact/` | 按需 | compact / cache hygiene |
-| Skill 定义层 | `~/.claude/skills/self-improvement-review/` | 按需 | review / promotion candidate / skill candidate |
-| 运行证据池 | `~/.claude/memory/records/` | 否 | errors / reviews / promotions / rejected |
-| 捕获入口 | `~/.claude/memory/inbox/` | 否 | H1 捕获的 correction candidates |
-| 归档层 | `~/.claude/memory/archive/` | 否 | legacy / test noise / raw artifacts |
-| 默认索引 | `~/.claude/memory/MEMORY.md` | 轻量 | memory 读取策略 |
-| 全局指令层 | `~/.claude/CLAUDE.md` | 是 | 极少量稳定规则，不由本仓库自动修改 |
+**说明：**
+- 两个 skill 使用同一套 memory schema
+- review skill 负责发现问题 和候选
+- compact skill 负责治理内容 和压缩策略
+- 两者都**不自动写 CLAUDE.md**
 
-## 本仓库结构
+## 4. 仓库结构
 
-```text
+```
 claude-self-improvement-skills/
 ├── README.md
 ├── .gitignore
 ├── auto-memory-compact/
 │   ├── SKILL.md
 │   ├── references/
+│   │   ├── auto-memory-safety.md
+│   │   ├── cache-hygiene.md
+│   │   ├── compact-classification.md
+│   │   ├── compact-retention-policy.md
+│   │   ├── dashboard-policy.md
+│   │   └── output-formats.md
 │   └── scripts/
+│       ├── generate_dashboard.py
+│       ├── inspect_memory.py
+│       └── retention_audit.py
 └── self-improvement-review/
     ├── SKILL.md
     ├── references/
+    │   ├── cache-hygiene-review.md
+    │   ├── do-not-remember-policy.md
+    │   ├── pattern-lifecycle.md
+    │   ├── promotion-policy.md
+    │   ├── record-schema.md
+    │   ├── report-template.md
+    │   ├── review-taxonomy.md
+    │   ├── session-review-policy.md
+    │   └── skill-extraction-policy.md
     └── scripts/
+        ├── collect_records.py
+        ├── collect_sessions.py
+        └── update_pattern_index.py
 ```
 
-- `SKILL.md`：skill 入口、触发场景、安全边界
-- `references/`：详细策略、分类规则、输出模板
-- `scripts/`：确定性只读检查脚本
+**说明：**
+- `SKILL.md`：触发入口、核心流程和边界
+- `references/`：详细策略、policy、模板、分类标准
+- `scripts/`：只读检查、统计、dry-run 或受控生成工具
 
-## Skill 1：auto-memory-compact
+## 5. Runtime memory 结构
 
-### 作用
+当前目标结构：
 
-- 检查 memory 目录结构
-- 检查 `MEMORY.md` 行数
-- 区分 `active warnings` 与 `archived_notes`
-- 生成 compact plan
-- 辅助归档测试噪声和低价值记录
-- 检查 cache hygiene
-
-### 不做什么
-
-- 不自动写 `CLAUDE.md`
-- 不自动改 Claude Code 官方 auto memory
-- 不自动删除 `.md`
-- 不把 `records/` 当 active rules
-- 不把 `archive/` 重新激活
-
-### 主要文件
-
-- `SKILL.md`
-- `references/auto-memory-safety.md`
-- `references/cache-hygiene.md`
-- `references/compact-classification.md`
-- `references/output-formats.md`
-- `scripts/inspect_memory.py`
-
-### 典型调用
-
-- compact memory
-- 检查 memory 健康
-- 检查 cache hygiene
-- 清理测试噪声
-
-## Skill 2：self-improvement-review
-
-### 作用
-
-- 分析 `inbox/`
-- 分析 `records/errors/`
-- 分析 `records/reviews/`
-- 提取 repeated friction patterns
-- 生成 review report
-- 生成 promotion candidate
-- 生成 skill candidate
-
-### 不做什么
-
-- 不自动 apply promotion
-- 不自动创建 skill
-- 不自动写全局或项目 `CLAUDE.md`
-- 不自动修改 Claude Code 官方 auto memory
-- 不把 `records/` 当规则执行
-
-### 主要文件
-
-- `SKILL.md`
-- `references/review-taxonomy.md`
-- `references/promotion-policy.md`
-- `references/skill-extraction-policy.md`
-- `references/cache-hygiene-review.md`
-- `references/report-template.md`
-- `scripts/collect_records.py`
-
-### 典型调用
-
-- 运行 self-improvement review
-- 检查 promotion candidates
-- 检查 repeated friction patterns
-- 处理 skill candidates
-
-## 与 Hook 层的关系
-
-本仓库不包含 Hook 脚本，但这两个 skill 通常与本地 Hook 配合使用。
-
-| Hook | 本地脚本 | 作用 | 输出 |
-|---|---|---|---|
-| H1 UserPromptSubmit | `~/.claude/memory/hooks/capture_user_correction.py` | 捕获用户纠错 | `~/.claude/memory/inbox/` |
-| H2 PostToolUse | `~/.claude/memory/hooks/capture_tool_failure.py` | 捕获真实工具失败 | `~/.claude/memory/records/errors/` |
-| H3 PreToolUse Bash | `~/.claude/memory/hooks/pretool_safety_guard.py` | 阻断高风险 Bash | `~/.claude/memory/records/errors/` |
-
-要点：
-- Hook 只捕获证据或阻断风险
-- Hook 不做 review / compact / promotion
-- Skill 才做 review / compact
-- H1/H2 默认不应输出 stdout
-- H3 block 使用 `exit 2` + `stderr`
-
-## 运行产物放在哪里
-
-运行产物不属于本仓库，统一放在 `~/.claude/memory/`：
-
-```text
+```
 ~/.claude/memory/
 ├── MEMORY.md
+├── SELF_IMPROVEMENT_DASHBOARD.md
 ├── inbox/
 ├── records/
 │   ├── errors/
 │   ├── reviews/
-│   ├── promotions/
+│   ├── patterns/
+│   │   └── PATTERN_INDEX.md
+│   ├── candidates/
+│   │   ├── promotions/
+│   │   ├── skills/
+│   │   └── capabilities/
 │   ├── rejected/
-│   └── skill-candidates/
+│   └── resolved/
 ├── compact/
+│   ├── COMPACT_POLICY.md
+│   ├── plans/
+│   └── reports/
 └── archive/
+    ├── summaries/
+    │   └── ARCHIVE_INDEX.md
+    └── raw/
 ```
 
-- `MEMORY.md`：轻量索引，保持短、稳、可缓存
-- `inbox/`：H1 捕获的 correction candidates
-- `records/errors/`：真实工具失败与异常
-- `records/reviews/`：review 产物
-- `records/promotions/`：promotion candidate 记录
-- `records/rejected/`：被拒绝的候选项
-- `records/skill-candidates/`：待提炼的 skill 候选
-- `compact/`：compact 过程中的临时/结果材料
-- `archive/`：历史、legacy、test noise、raw artifacts
+**逐项说明：**
 
-## Promotion Candidate 规则
+### MEMORY.md
+- 轻量索引和读取策略
+- 不放长报告
+- 不放错误详情
+- 不放候选全文
 
-- promotion candidate 只是候选建议
-- 不代表自动写入 `CLAUDE.md`
-- 不代表自动修改配置
-- 不代表自动成为 active rule
-- 写入全局或项目 `CLAUDE.md` 必须有用户单独明确批准
-- 更适合优先写入 skill references 的规则，不应轻易提升到全局 `CLAUDE.md`
-- 已接受进入 skill policy 的 candidate 可标记为 `accepted_into_skill_policy`
+### SELF_IMPROVEMENT_DASHBOARD.md
+- 人类状态面板
+- 不是 active rules
+- 控制在短内容
+- 展示 version / last review / errors / warnings / next actions
 
-## Cache Hygiene 设计原则
+### inbox/
+- 未 review 的 correction candidates
+- 主要来自 H1 UserPromptSubmit
+- 不长期堆积
 
-- 默认 prompt 前缀应短、稳定
-- `records/`、`archive/`、`compact/` 不默认读取
-- `MEMORY.md` 应保持轻量索引
-- 日常纠错、失败记录、阶段总结不写入全局 `CLAUDE.md`
-- 长流程进入 skill，而不是 `CLAUDE.md`
-- `archive/` 中的大文件只作为 `archived_notes`，不作为 `active warnings`
+### records/errors/
+- 工具失败和安全阻断
+- 主要来自 H2/H3
+- 是证据，不是规则
+- tail-noise 超阈值才 review
 
-## 安装方式
+### records/reviews/
+- formal review、migration report、smoke test、stabilization report
+- 可重复报告应使用 `YYYYMMDD_HHMMSS` 命名
+- 避免覆盖
 
+### records/patterns/
+- repeated friction pattern topic files
+- `PATTERN_INDEX.md` 是索引，不是 pattern
+- pattern_count 以 `update_pattern_index.py` 为准
+
+### records/candidates/
+- promotions：候选提升建议
+- skills：候选 skill
+- capabilities：能力缺口
+- candidates 不是 apply
+
+### records/rejected/
+- 重复、低价值、误捕获、证据不足项
+
+### records/resolved/
+- 曾经重要但已解决的问题
+
+### compact/
+- compact policy、plans、reports
+- plan 先于 execution
+- 默认不删除 .md
+
+### archive/
+- 历史归档
+- summaries 是摘要和索引
+- raw 是原始历史材料
+- `archive/raw` inactive unless explicitly requested
+
+## 6. auto-memory-compact 工作逻辑
+
+**触发场景：**
+- compact memory
+- 检查 memory 健康
+- 检查 cache hygiene
+- 运行 retention audit
+- 生成 dashboard
+- 生成 compact plan
+
+**不会：**
+- 不自动删除 .md
+- 不自动写 CLAUDE.md
+- 不自动修改 MEMORY.md
+- 不自动修改 official auto memory
+- 不把 `archive/raw` 当 active rules
+
+**References：**
+
+| 文件 | 作用 |
+|---|---|
+| `references/auto-memory-safety.md` | 修改 Claude Code auto memory 的安全规则 |
+| `references/cache-hygiene.md` | Cache 稳定性和 prompt 前缀检查 |
+| `references/compact-classification.md` | Entry 分类法（active / archived / evidence / noise） |
+| `references/compact-retention-policy.md` | 内容治理、保留策略、归档策略 |
+| `references/dashboard-policy.md` | Dashboard 内容、行数、更新规则 |
+| `references/output-formats.md` | Compact plan 和 report 输出格式 |
+
+**Scripts：**
+
+| 脚本 | 作用 |
+|---|---|
+| `scripts/inspect_memory.py` | 只读扫描 `~/.claude/memory/`，输出 target_structure_status、warnings、archived_notes、dashboard/pattern index 状态 |
+| `scripts/generate_dashboard.py` | 默认 stdout，--write 时才写 `SELF_IMPROVEMENT_DASHBOARD.md`。dashboard 不是 active rules |
+| `scripts/retention_audit.py` | 只读统计文件总量、archive/raw 增长、覆盖风险、compact recommendation。不读正文，不移动不删除 |
+
+## 7. self-improvement-review 工作逻辑
+
+**触发场景：**
+- 运行 self-improvement review
+- 检查 repeated friction patterns
+- 检查 promotion candidates
+- 检查 skill candidates
+- session transcript discovery
+
+**不会：**
+- 不自动 apply promotion
+- 不自动创建 skill
+- 不自动写 CLAUDE.md
+- 不自动读取 transcript 全文
+- 不自动修改 official auto memory
+
+**References：**
+
+| 文件 | 作用 |
+|---|---|
+| `references/record-schema.md` | records/ 各子目录的文件 schema 和 frontmatter 格式 |
+| `references/pattern-lifecycle.md` | Pattern 从发现到解决的生命周期 |
+| `references/do-not-remember-policy.md` | 不应写入 memory 的内容 |
+| `references/session-review-policy.md` | session transcript review 范围和限制 |
+| `references/review-taxonomy.md` | Review 分类（formal / informal / dry-run / migration） |
+| `references/promotion-policy.md` | promotion candidate 的评判标准 |
+| `references/skill-extraction-policy.md` | skill candidate 提炼规则 |
+| `references/cache-hygiene-review.md` | review 过程中的 cache hygiene 检查点 |
+| `references/report-template.md` | Review report 输出模板 |
+
+**Scripts：**
+
+| 脚本 | 作用 |
+|---|---|
+| `scripts/collect_records.py` | 只读扫描 records/，支持 v0.1 / v0.2 / mixed，统计 categories、status、types、candidates、patterns、unresolved errors |
+| `scripts/update_pattern_index.py` | 默认 dry-run，跳过 PATTERN_INDEX.md，--write 才更新 index |
+| `scripts/collect_sessions.py` | 只做 session/jsonl discovery，不读取全文，不写 records，v0.2.1 后才考虑 quote extraction |
+
+## 8. 标准工作流
+
+### 8.1 日常使用
+- H1 捕获纠错到 inbox
+- H2 捕获工具失败到 records/errors
+- H3 阻断高风险 Bash
+- Skill **不自动运行**
+
+### 8.2 运行 self-improvement review
+1. collect_records
+2. pattern lifecycle
+3. candidates
+4. review report
+5. 不 apply
+
+### 8.3 compact memory
+1. inspect_memory
+2. retention_audit
+3. compact plan
+4. 用户批准
+5. safe execution
+6. no delete by default
+
+### 8.4 retention audit
+1. 检查 total_files
+2. 检查 archive/raw 增长
+3. 检查 records/errors
+4. 检查 records/reviews
+5. 检查 overwrite risk
+6. 给出 compact recommendation
+
+### 8.5 smoke test
+1. 验证两个 skill 的只读链路
+2. generate_dashboard stdout
+3. collect_sessions discovery
+4. 不写默认上下文层
+
+## 9. 命名规则
+
+重复任务报告必须使用：
+```
+YYYYMMDD_HHMMSS_<slug>.md
+```
+
+**适用场景：**
+- smoke test
+- dry-run review
+- compact plan
+- compact report
+- cleanup report
+- retention audit
+
+一次性阶段报告可使用：
+```
+YYYYMMDD_v0.2-g-stabilization-report.md
+```
+
+**禁止**：默认覆盖旧报告。
+
+如果需要最新指针，未来使用：
+- `LATEST_REVIEW.md`
+- `LATEST_SMOKE_TEST.md`
+- `LATEST_COMPACT.md`
+
+当前不强制创建 LATEST 指针。
+
+## 10. Safety / Boundaries
+
+- `records/` 是 evidence pool，不是 active rules
+- `candidates/` 是 proposals，不是 apply
+- dashboard 是 human orientation，不是 active rules
+- `archive/` inactive unless explicitly requested
+- compact plan 不是 execution
+- 删除 .md 需要用户明确批准
+- 写 CLAUDE.md 需要用户单独明确批准
+- official auto memory 不由本仓库修改
+- session transcript 默认只 discovery，不读取全文
+
+## 11. 安装和同步
+
+**安装：**
 ```bash
 git clone https://github.com/Leelook54/claude-self-improvement-skills.git
 cp -R claude-self-improvement-skills/auto-memory-compact ~/.claude/skills/
 cp -R claude-self-improvement-skills/self-improvement-review ~/.claude/skills/
 ```
 
-也可以用同步工具或本地镜像把两个 skill 目录复制到 `~/.claude/skills/`，但不要把运行证据、settings、`CLAUDE.md` 或 hook 日志同步进来。
+**同步：**
+```bash
+rsync -av --delete auto-memory-compact/ ~/.claude/skills/auto-memory-compact/
+rsync -av --delete self-improvement-review/ ~/.claude/skills/self-improvement-review/
+```
 
-## 同步、升级与版本标记
+**警告**：不要对 `~/.claude/memory/` 使用 `rsync --delete`。
 
-- 同步时，只同步两个 skill 目录和它们各自的 `SKILL.md`、`references/`、`scripts/`
-- 升级时，优先在仓库中改 skill 本体，再同步到 `~/.claude/skills/`
-- 版本标记建议使用 Git tag，例如 `v0.1.0`、`v0.2.0`
-- 版本说明应只描述 skill 定义变化，不描述 runtime evidence
-- 如果某个 promotion candidate 已进入 skill policy，可在相关引用里标记为 `accepted_into_skill_policy`
+## 12. GitHub 仓库维护
 
-## 不应提交的内容
+- Runtime skill 是 source of execution
+- Git repo 是 versioned source
+- 同步前先确认 diff
+- 不提交 runtime evidence
+- 不提交 settings / CLAUDE.md
+- 不提交 archive/raw
+- 不提交 records/
 
-以下内容不应提交到本仓库：
+**维护流程：**
+1. 修改或同步 skill
+2. 运行脚本测试
+3. `git diff --stat`
+4. `git add`
+5. `git commit`
+6. `git push`
 
+## 13. 不应提交的内容
+
+以下内容**不应提交**到本仓库：
+
+- `~/.claude/memory/`
 - `records/`
 - `archive/`
 - `inbox/`
 - `compact/`
 - `settings.json`
+- `settings.local.json`
 - `CLAUDE.md`
 - hook logs
-- 任何 runtime evidence
+- `__pycache__`
+- `.DS_Store`
+- `.env`
 
-## 面向未来维护
+## 14. 当前观察期建议
 
-维护这个仓库时，优先保证三件事：
-
-1. skill 本体稳定，默认前缀短且可缓存
-2. 运行证据始终留在 `~/.claude/memory/`
-3. promotion candidate 只作为建议，必须由用户明确批准后再进入更高层规则
-
-这样可以让 review、compact、cache hygiene 和长期维护互相独立，也便于回滚和复用。
+- 正常使用 1–3 天
+- `records/errors > 30` 再检查
+- `active warnings > 0` 立即检查
+- `inbox > 10` 运行 review
+- 不新增 Hook
+- 不改 CLAUDE.md
+- 不继续堆功能
