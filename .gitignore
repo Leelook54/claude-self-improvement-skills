@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment
+.env
+.env.*
+.env.local
+
+# Logs
+*.log
+
+# Claude Code runtime artifacts
+memory/
+records/
+archive/
+compact/
+inbox/
+
+# Backups
+*.bak
+*.backup
+*~
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
