@@ -7,6 +7,27 @@ import sys
 from pathlib import Path
 
 
+def derive_memory_path() -> str:
+    """Derive memory path with priority: CLAUDE_MEMORY_DIR, project memory, fallback."""
+    # 1. Env var
+    if "CLAUDE_MEMORY_DIR" in os.environ:
+        return os.environ["CLAUDE_MEMORY_DIR"]
+
+    cwd = os.getcwd()
+
+    # 2. Project memory: ~/.claude/projects/<project>/memory/
+    home = str(Path.home())
+    if cwd.startswith(home):
+        project_key = cwd[len(home):].lstrip("/").replace("/", "-")
+        if project_key:
+            project_memory = os.path.join(home, ".claude", "projects", project_key, "memory")
+            if os.path.exists(project_memory) or True:  # don't check existence here
+                return project_memory
+
+    # 3. Fallback
+    return os.path.join(home, ".claude", "memory")
+
+
 def inspect_memory(memory_path: str) -> dict:
     """Inspect a memory directory and return JSON report."""
     path = Path(memory_path).expanduser().resolve()
@@ -150,11 +171,26 @@ def inspect_memory(memory_path: str) -> dict:
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(json.dumps({"error": "Usage: inspect_memory.py <memory_path>"}))
+    memory_path = None
+
+    if len(sys.argv) == 2:
+        arg = sys.argv[1]
+        if arg in ("-h", "--help"):
+            print("Usage: inspect_memory.py [--memory-dir <path>] [<memory_path>]")
+            print("  --memory-dir <path>  : explicit path via flag")
+            print("  <memory_path>         : legacy positional argument")
+            print("  (no args)            : auto-derive path")
+            sys.exit(0)
+        memory_path = arg
+    elif len(sys.argv) == 3 and sys.argv[1] == "--memory-dir":
+        memory_path = sys.argv[2]
+    elif len(sys.argv) > 1:
+        print(json.dumps({"error": "Usage: inspect_memory.py [--memory-dir <path>] [<memory_path>]"}))
         sys.exit(1)
 
-    memory_path = sys.argv[1]
+    if memory_path is None:
+        memory_path = derive_memory_path()
+
     result = inspect_memory(memory_path)
     print(json.dumps(result, indent=2))
 

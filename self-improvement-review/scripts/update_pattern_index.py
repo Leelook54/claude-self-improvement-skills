@@ -14,6 +14,24 @@ from pathlib import Path
 DEFAULT_PATTERNS_DIR = "/Users/qunqing/.claude/memory/records/patterns"
 
 
+def derive_patterns_path() -> str:
+    """Derive patterns path with priority: CLAUDE_PATTERNS_DIR, project memory patterns, fallback."""
+    import os
+    if "CLAUDE_PATTERNS_DIR" in os.environ:
+        return os.environ["CLAUDE_PATTERNS_DIR"]
+
+    cwd = os.getcwd()
+    home = str(Path.home())
+
+    if cwd.startswith(home):
+        project_key = cwd[len(home):].lstrip("/").replace("/", "-")
+        if project_key:
+            project_patterns = os.path.join(home, ".claude", "projects", project_key, "memory", "records", "patterns")
+            return project_patterns
+
+    return DEFAULT_PATTERNS_DIR
+
+
 def parse_pattern_frontmatter(file_path: Path) -> dict:
     """Parse pattern frontmatter."""
     try:
@@ -129,13 +147,20 @@ def generate_index_content(patterns: list) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Update pattern index")
-    parser.add_argument("--patterns-dir", default=DEFAULT_PATTERNS_DIR, help="Patterns directory path")
+    parser.add_argument("--patterns-dir", help="Patterns directory path")
     parser.add_argument("--write", action="store_true", help="Write PATTERN_INDEX.md")
+    parser.add_argument("--dry-run", action="store_true", help="No-op flag (mutually exclusive with --write)")
 
     args = parser.parse_args()
 
-    patterns_dir = Path(args.patterns_dir).expanduser().resolve()
+    if args.dry_run and args.write:
+        print(json.dumps({"error": "--dry-run and --write are mutually exclusive"}))
+        sys.exit(1)
+
+    patterns_dir_str = args.patterns_dir if args.patterns_dir else derive_patterns_path()
+    patterns_dir = Path(patterns_dir_str).expanduser().resolve()
     result = scan_patterns(patterns_dir)
+    result["dry_run"] = args.dry_run
 
     if args.write:
         index_path = patterns_dir / "PATTERN_INDEX.md"

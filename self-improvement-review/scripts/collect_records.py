@@ -13,8 +13,6 @@ from pathlib import Path
 from datetime import datetime
 
 
-DEFAULT_RECORDS_PATH = "/Users/qunqing/.claude/memory/records/"
-
 # v0.1 root-level categories
 V01_CATEGORIES = [
     "corrections",
@@ -37,6 +35,26 @@ V02_CANDIDATES_MAP = {
     "skills": "skill-candidates",
     "capabilities": "capability-requests",
 }
+
+
+def derive_records_path() -> str:
+    """Derive records path with priority: CLAUDE_RECORDS_DIR, project memory records, fallback."""
+    # 1. Env var
+    if "CLAUDE_RECORDS_DIR" in os.environ:
+        return os.environ["CLAUDE_RECORDS_DIR"]
+
+    cwd = os.getcwd()
+    home = str(Path.home())
+
+    # 2. Project memory records: ~/.claude/projects/<project>/memory/records/
+    if cwd.startswith(home):
+        project_key = cwd[len(home):].lstrip("/").replace("/", "-")
+        if project_key:
+            project_records = os.path.join(home, ".claude", "projects", project_key, "memory", "records")
+            return project_records
+
+    # 3. Fallback
+    return os.path.join(home, ".claude", "memory", "records")
 
 
 def parse_frontmatter(file_path: Path) -> dict:
@@ -73,6 +91,7 @@ def collect_records(records_path: str) -> dict:
         "pattern_count": 0,
         "unresolved_errors_count": 0,
         "compatibility_mode": "unknown",
+        "dry_run": False,
     }
 
     path = Path(records_path)
@@ -205,8 +224,38 @@ def collect_records(records_path: str) -> dict:
 
 
 def main():
-    records_path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_RECORDS_PATH
+    records_path = None
+    dry_run = False
+
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg in ("-h", "--help"):
+            print("Usage: collect_records.py [--records-dir <path>] [--dry-run] [<records_path>]")
+            print("  --records-dir <path> : explicit path via flag")
+            print("  --dry-run            : no-op flag (read-only)")
+            print("  <records_path>       : legacy positional argument")
+            print("  (no args)            : auto-derive path")
+            sys.exit(0)
+        elif arg == "--records-dir" and i + 1 < len(args):
+            records_path = args[i + 1]
+            i += 2
+        elif arg == "--dry-run":
+            dry_run = True
+            i += 1
+        elif not arg.startswith("-"):
+            records_path = arg
+            i += 1
+        else:
+            print(json.dumps({"error": f"Unknown argument: {arg}"}))
+            sys.exit(1)
+
+    if records_path is None:
+        records_path = derive_records_path()
+
     result = collect_records(records_path)
+    result["dry_run"] = dry_run
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 

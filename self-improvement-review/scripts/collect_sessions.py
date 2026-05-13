@@ -89,11 +89,13 @@ def main():
     parser = argparse.ArgumentParser(description="Discover session files")
     parser.add_argument("--root", default=DEFAULT_ROOT, help="Root directory to search")
     parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help="Days to look back")
+    parser.add_argument("--dry-run", action="store_true", help="No-op flag")
 
     args = parser.parse_args()
 
     root = Path(args.root).expanduser().resolve()
     result = find_session_files(root, args.days)
+    result["dry_run"] = args.dry_run
 
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
