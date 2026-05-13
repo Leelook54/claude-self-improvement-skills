@@ -1,9 +1,9 @@
 # Do Not Remember Policy
 
-## Purpose
+## 目的
 定义哪些内容不应写入长期 self-improvement memory。
 
-## Do Not Record
+## 不应记录
 - 一次性终端输出
 - 可从当前仓库或文件重新推导的事实
 - 短期任务进度

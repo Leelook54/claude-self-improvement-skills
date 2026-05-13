@@ -6,7 +6,7 @@
 
 ---
 
-## Scope
+## 范围
 
 ## Files Inspected
 - records/corrections/

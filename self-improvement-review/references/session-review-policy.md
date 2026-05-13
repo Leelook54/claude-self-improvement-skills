@@ -1,9 +1,9 @@
 # Session Review Policy
 
-## Purpose
+## 目的
 定义未来从 Claude Code session transcript/jsonl 中提取 evidence 的边界。
 
-## Scope
+## 范围
 - 只读扫描 transcript/jsonl
 - 先统计和定位候选 session
 - 不默认读取全文

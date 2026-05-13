@@ -1,6 +1,6 @@
 # Pattern Lifecycle
 
-## Purpose
+## 目的
 定义 repeated friction patterns 的识别、更新、解决、关闭和重新打开规则。
 
 ## Pattern File

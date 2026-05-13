@@ -6,7 +6,7 @@
 ## Target File
 ~/.claude/memory/SELF_IMPROVEMENT_DASHBOARD.md
 
-## Rules
+## 规则
 - Dashboard is for human orientation only.
 - Dashboard is not active rules.
 - Keep under 80 lines when possible.
