@@ -48,3 +48,9 @@ description: Analyze local self-improvement memory records, user corrections, to
 - Read `references/pattern-lifecycle.md` for friction pattern detection and lifecycle
 - Read `references/do-not-remember-policy.md` before writing to long-term memory
 - Read `references/session-review-policy.md` for session transcript evidence extraction
+
+## Scripts
+
+- `scripts/collect_records.py` — Collect records summary (supports v0.1/v0.2)
+- `scripts/update_pattern_index.py` — Scan and index friction patterns (dry-run by default)
+- `scripts/collect_sessions.py` — Discover session files for future review (dry-run)

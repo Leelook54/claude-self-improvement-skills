@@ -42,3 +42,8 @@ description: Review and compact Claude Code auto memory and local self-improveme
 - `references/output-formats.md` — Compact plan and report output formats
 - `references/compact-retention-policy.md` — Content governance, retention, and archive strategy
 - `references/dashboard-policy.md` — Dashboard content, line count, and update rules
+
+## Scripts
+
+- `scripts/inspect_memory.py` — Inspect memory structure (supports v0.2 checks)
+- `scripts/generate_dashboard.py` — Generate dashboard markdown (dry-run by default)

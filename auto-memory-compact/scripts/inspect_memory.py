@@ -18,13 +18,26 @@ def inspect_memory(memory_path: str) -> dict:
         "markdown_file_count": 0,
         "topic_files": [],
         "warnings": [],
-        "archived_notes": []
+        "archived_notes": [],
+        # v0.2 structure checks
+        "dashboard_exists": False,
+        "dashboard_line_count": 0,
+        "pattern_index_exists": False,
+        "archive_index_exists": False,
+        "compact_policy_exists": False,
+        "compact_plans_dir_exists": False,
+        "compact_reports_dir_exists": False,
+        "candidates_dir_exists": False,
+        "target_structure_status": "unknown",
+        "active_warning_count": 0,
+        "archived_note_count": 0,
     }
 
     if not path.exists():
         result["warnings"].append("Directory does not exist")
         return result
 
+    # Check MEMORY.md
     memory_md = path / "MEMORY.md"
     if memory_md.exists():
         result["memory_md_exists"] = True
@@ -36,8 +49,19 @@ def inspect_memory(memory_path: str) -> dict:
             elif len(lines) > 100:
                 result["warnings"].append("MEMORY.md exceeds 100 lines (cache hygiene note)")
 
+    # Check SELF_IMPROVEMENT_DASHBOARD.md
+    dashboard = path / "SELF_IMPROVEMENT_DASHBOARD.md"
+    if dashboard.exists():
+        result["dashboard_exists"] = True
+        with open(dashboard, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            result["dashboard_line_count"] = len(lines)
+            if len(lines) > 120:
+                result["warnings"].append("Dashboard exceeds 120 lines")
+
+    # Scan all markdown files
     for md_file in path.rglob("*.md"):
-        if md_file.name != "MEMORY.md":
+        if md_file.name not in ["MEMORY.md", "SELF_IMPROVEMENT_DASHBOARD.md"]:
             result["markdown_file_count"] += 1
             rel_path = md_file.relative_to(path)
             result["topic_files"].append(str(rel_path))
@@ -55,6 +79,58 @@ def inspect_memory(memory_path: str) -> dict:
                     result["archived_notes"].append(msg)
                 else:
                     result["warnings"].append(msg)
+
+    # v0.2 structure checks
+    records_path = path / "records"
+
+    # Pattern index
+    pattern_index = records_path / "patterns" / "PATTERN_INDEX.md"
+    result["pattern_index_exists"] = pattern_index.exists()
+
+    # Archive index
+    archive_index = path / "archive" / "summaries" / "ARCHIVE_INDEX.md"
+    result["archive_index_exists"] = archive_index.exists()
+
+    # Compact structure
+    compact_path = path / "compact"
+    result["compact_policy_exists"] = (compact_path / "COMPACT_POLICY.md").exists()
+    result["compact_plans_dir_exists"] = (compact_path / "plans").is_dir()
+    result["compact_reports_dir_exists"] = (compact_path / "reports").is_dir()
+
+    # Candidates structure
+    result["candidates_dir_exists"] = (records_path / "candidates").is_dir()
+
+    # Determine target structure status
+    # Core v0.2 nodes that must exist
+    v02_mandatory = [
+        pattern_index.exists(),
+        result["candidates_dir_exists"],
+        result["compact_plans_dir_exists"],
+        result["compact_reports_dir_exists"],
+    ]
+
+    if all(v02_mandatory):
+        result["target_structure_status"] = "v0.2"
+    elif not any(v02_mandatory):
+        result["target_structure_status"] = "v0.1"
+    else:
+        result["target_structure_status"] = "partial-v0.2"
+
+    # Check for default_load: true in records
+    if records_path.exists():
+        for md_file in records_path.rglob("*.md"):
+            try:
+                with open(md_file, "r", encoding="utf-8") as f:
+                    content = f.read(1024)
+                if "default_load: true" in content or "default_load:true" in content:
+                    rel_path = md_file.relative_to(records_path)
+                    result["warnings"].append(f"default_load: true found in {rel_path}")
+            except Exception:
+                pass
+
+    # Set counts
+    result["active_warning_count"] = len(result["warnings"])
+    result["archived_note_count"] = len(result["archived_notes"])
 
     return result
 
