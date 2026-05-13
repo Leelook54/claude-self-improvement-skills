@@ -19,10 +19,24 @@
 
 ## 2. 当前版本状态
 
-| 字段 | 值 |
-|------|---|
-| 当前版本 | v0.2 |
-| 状态 | 结构稳定，已通过 smoke test，进入真实使用观察期 |
+<table>
+  <thead>
+    <tr>
+      <th>字段</th>
+      <th>值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>当前版本</td>
+      <td>v0.2</td>
+    </tr>
+    <tr>
+      <td>状态</td>
+      <td>结构稳定，已通过 smoke test，进入真实使用观察期</td>
+    </tr>
+  </tbody>
+</table>
 
 **已完成：**
 - schema / policy references
@@ -42,10 +56,30 @@
 
 ## 3. Skill 总览
 
-| Skill | 路径 | 主要职责 | 输出目标 |
-|---|---|---|---|
-| auto-memory-compact | `auto-memory-compact/` | memory 结构检查、compact policy、dashboard、retention audit、archive index | `~/.claude/memory/compact/`、`archive/summaries/`、`dashboard` |
-| self-improvement-review | `self-improvement-review/` | review 证据、pattern lifecycle、候选项、session discovery、promotion policy | `~/.claude/memory/records/reviews/`、`patterns/`、`candidates/` |
+<table>
+  <thead>
+    <tr>
+      <th>Skill</th>
+      <th>路径</th>
+      <th>主要职责</th>
+      <th>输出目标</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>auto-memory-compact</code></td>
+      <td><code>auto-memory-compact/</code></td>
+      <td>memory 结构检查、compact policy、dashboard、retention audit、archive index</td>
+      <td><code>~/.claude/memory/compact/</code>、<code>archive/summaries/</code>、dashboard</td>
+    </tr>
+    <tr>
+      <td><code>self-improvement-review</code></td>
+      <td><code>self-improvement-review/</code></td>
+      <td>review 证据、pattern lifecycle、候选项、session discovery、promotion policy</td>
+      <td><code>~/.claude/memory/records/reviews/</code>、patterns、candidates</td>
+    </tr>
+  </tbody>
+</table>
 
 **说明：**
 - 两个 skill 使用同一套 memory schema
@@ -202,22 +236,65 @@ claude-self-improvement-skills/
 
 **References：**
 
-| 文件 | 作用 |
-|---|---|
-| `references/auto-memory-safety.md` | 修改 Claude Code auto memory 的安全规则 |
-| `references/cache-hygiene.md` | Cache 稳定性和 prompt 前缀检查 |
-| `references/compact-classification.md` | Entry 分类法（active / archived / evidence / noise） |
-| `references/compact-retention-policy.md` | 内容治理、保留策略、归档策略 |
-| `references/dashboard-policy.md` | Dashboard 内容、行数、更新规则 |
-| `references/output-formats.md` | Compact plan 和 report 输出格式 |
+<table>
+  <thead>
+    <tr>
+      <th>文件</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>references/auto-memory-safety.md</code></td>
+      <td>修改 Claude Code auto memory 的安全规则</td>
+    </tr>
+    <tr>
+      <td><code>references/cache-hygiene.md</code></td>
+      <td>Cache 稳定性和 prompt 前缀检查</td>
+    </tr>
+    <tr>
+      <td><code>references/compact-classification.md</code></td>
+      <td>Entry 分类法（active / archived / evidence / noise）</td>
+    </tr>
+    <tr>
+      <td><code>references/compact-retention-policy.md</code></td>
+      <td>内容治理、保留策略、归档策略</td>
+    </tr>
+    <tr>
+      <td><code>references/dashboard-policy.md</code></td>
+      <td>Dashboard 内容、行数、更新规则</td>
+    </tr>
+    <tr>
+      <td><code>references/output-formats.md</code></td>
+      <td>Compact plan 和 report 输出格式</td>
+    </tr>
+  </tbody>
+</table>
 
 **Scripts：**
 
-| 脚本 | 作用 |
-|---|---|
-| `scripts/inspect_memory.py` | 只读扫描 `~/.claude/memory/`，输出 target_structure_status、warnings、archived_notes、dashboard/pattern index 状态 |
-| `scripts/generate_dashboard.py` | 默认 stdout，--write 时才写 `SELF_IMPROVEMENT_DASHBOARD.md`。dashboard 不是 active rules |
-| `scripts/retention_audit.py` | 只读统计文件总量、archive/raw 增长、覆盖风险、compact recommendation。不读正文，不移动不删除 |
+<table>
+  <thead>
+    <tr>
+      <th>脚本</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>scripts/inspect_memory.py</code></td>
+      <td>只读扫描 <code>~/.claude/memory/</code>，输出 target_structure_status、warnings、archived_notes、dashboard/pattern index 状态</td>
+    </tr>
+    <tr>
+      <td><code>scripts/generate_dashboard.py</code></td>
+      <td>默认 stdout，<code>--write</code> 时才写 <code>SELF_IMPROVEMENT_DASHBOARD.md</code></td>
+    </tr>
+    <tr>
+      <td><code>scripts/retention_audit.py</code></td>
+      <td>只读统计文件总量、archive/raw 增长、覆盖风险、compact recommendation</td>
+    </tr>
+  </tbody>
+</table>
 
 ## 7. self-improvement-review 工作逻辑
 
@@ -237,25 +314,77 @@ claude-self-improvement-skills/
 
 **References：**
 
-| 文件 | 作用 |
-|---|---|
-| `references/record-schema.md` | records/ 各子目录的文件 schema 和 frontmatter 格式 |
-| `references/pattern-lifecycle.md` | Pattern 从发现到解决的生命周期 |
-| `references/do-not-remember-policy.md` | 不应写入 memory 的内容 |
-| `references/session-review-policy.md` | session transcript review 范围和限制 |
-| `references/review-taxonomy.md` | Review 分类（formal / informal / dry-run / migration） |
-| `references/promotion-policy.md` | promotion candidate 的评判标准 |
-| `references/skill-extraction-policy.md` | skill candidate 提炼规则 |
-| `references/cache-hygiene-review.md` | review 过程中的 cache hygiene 检查点 |
-| `references/report-template.md` | Review report 输出模板 |
+<table>
+  <thead>
+    <tr>
+      <th>文件</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>references/record-schema.md</code></td>
+      <td>records/ 各子目录的文件 schema 和 frontmatter 格式</td>
+    </tr>
+    <tr>
+      <td><code>references/pattern-lifecycle.md</code></td>
+      <td>Pattern 从发现到解决的生命周期</td>
+    </tr>
+    <tr>
+      <td><code>references/do-not-remember-policy.md</code></td>
+      <td>不应写入 memory 的内容</td>
+    </tr>
+    <tr>
+      <td><code>references/session-review-policy.md</code></td>
+      <td>session transcript review 范围和限制</td>
+    </tr>
+    <tr>
+      <td><code>references/review-taxonomy.md</code></td>
+      <td>Review 分类</td>
+    </tr>
+    <tr>
+      <td><code>references/promotion-policy.md</code></td>
+      <td>promotion candidate 的评判标准</td>
+    </tr>
+    <tr>
+      <td><code>references/skill-extraction-policy.md</code></td>
+      <td>skill candidate 提炼规则</td>
+    </tr>
+    <tr>
+      <td><code>references/cache-hygiene-review.md</code></td>
+      <td>review 过程中的 cache hygiene 检查点</td>
+    </tr>
+    <tr>
+      <td><code>references/report-template.md</code></td>
+      <td>Review report 输出模板</td>
+    </tr>
+  </tbody>
+</table>
 
 **Scripts：**
 
-| 脚本 | 作用 |
-|---|---|
-| `scripts/collect_records.py` | 只读扫描 records/，支持 v0.1 / v0.2 / mixed，统计 categories、status、types、candidates、patterns、unresolved errors |
-| `scripts/update_pattern_index.py` | 默认 dry-run，跳过 PATTERN_INDEX.md，--write 才更新 index |
-| `scripts/collect_sessions.py` | 只做 session/jsonl discovery，不读取全文，不写 records，v0.2.1 后才考虑 quote extraction |
+<table>
+  <thead>
+    <tr>
+      <th>脚本</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>scripts/collect_records.py</code></td>
+      <td>只读扫描 records/，支持 v0.1 / v0.2 / mixed</td>
+    </tr>
+    <tr>
+      <td><code>scripts/update_pattern_index.py</code></td>
+      <td>默认 dry-run，跳过 <code>PATTERN_INDEX.md</code>，<code>--write</code> 才更新 index</td>
+    </tr>
+    <tr>
+      <td><code>scripts/collect_sessions.py</code></td>
+      <td>只做 session/jsonl discovery，不读取全文，不写 records</td>
+    </tr>
+  </tbody>
+</table>
 
 ## 8. 标准工作流
 
@@ -347,7 +476,7 @@ cp -R claude-self-improvement-skills/self-improvement-review ~/.claude/skills/
 **同步：**
 ```bash
 rsync -av --delete auto-memory-compact/ ~/.claude/skills/auto-memory-compact/
-rsync -av --delete self-improvement-review/ ~/.claude/skills/self-improvement-review/
+rsync -av --delete self-improvement-review/ ~/.claude/skills/auto-improvement-review/
 ```
 
 **警告**：不要对 `~/.claude/memory/` 使用 `rsync --delete`。
