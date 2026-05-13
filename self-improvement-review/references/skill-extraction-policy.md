@@ -1,28 +1,28 @@
 # Skill Extraction Policy
 
-## When to Extract a Skill
+## 何时提取 Skill
 
-A task should be extracted into a skill when it meets **multiple** of the following criteria:
+当任务满足**多个**以下条件时应提取为 skill：
 
-- Multi-step process (3+ steps)
-- Repeated usage
-- Requires a checklist or fixed output format
-- Not suitable for CLAUDE.md
-- Has clear trigger scenarios (slash command or keywords)
-- Can be organized as `SKILL.md` + `references/` + `scripts/`
+- 多步骤流程（3+ 步骤）
+- 重复使用
+- 需要 checklist 或固定输出格式
+- 不适合放入 CLAUDE.md
+- 有明确的触发场景（slash command 或关键词）
+- 可组织为 `SKILL.md` + `references/` + `scripts/`
 
-## Recommended Skill Structure
+## 推荐 Skill 结构
 
 ```
 skill-name/
-├── SKILL.md              # YAML frontmatter + concise body
-├── references/           # Complex rules
-└── scripts/             # Executable scripts (optional)
+├── SKILL.md              # YAML frontmatter + 简洁正文
+├── references/           # 复杂规则
+└── scripts/             # 可执行脚本（可选）
 ```
 
-## What Should NOT Be a Skill
+## 什么不应作为 Skill
 
-- One-off tasks
-- Simple single-step operations
-- Highly project-specific workflows
-- Pure exploratory research
+- 一次性任务
+- 简单的单步操作
+- 高度项目专用工作流
+- 纯探索性研究

@@ -1,10 +1,10 @@
 # Record Schema
 
-## Purpose
+## 目的
 定义 self-improvement memory records 的统一 frontmatter 和状态机。
 records/ 是低频证据池，不是 active rules。
 
-## Required Frontmatter
+## 必填 frontmatter
 
 统一字段：
 ---
@@ -20,7 +20,8 @@ verify_before_use:
 promote_requires_user_approval: true
 ---
 
-## Type Values
+## type 值
+
 - correction_candidate
 - tool_error
 - safety_block
@@ -32,7 +33,8 @@ promote_requires_user_approval: true
 - rejected
 - resolved_issue
 
-## Source Values
+## source 值
+
 - hook
 - self-improvement-review
 - auto-memory-compact
@@ -40,7 +42,8 @@ promote_requires_user_approval: true
 - manual
 - session-transcript
 
-## Status Values
+## status 值
+
 - unreviewed
 - proposed
 - needs_evidence
@@ -52,18 +55,21 @@ promote_requires_user_approval: true
 - superseded
 - archived
 
-## Freshness Values
+## freshness 值
+
 - current
 - stale
 - historical
 
-## Hard Requirements
-- default_load must be false for all records.
-- promotion candidates must set promote_requires_user_approval: true.
-- records must not be treated as active rules.
-- writing to global or project CLAUDE.md requires a separate explicit user approval step.
+## 硬性要求
 
-## Directory Mapping
+- 所有 records 的 `default_load` 必须为 false
+- promotion candidates 必须设置 `promote_requires_user_approval: true`
+- records 不得作为 active rules
+- 写入全局或项目 CLAUDE.md 需要单独的、明确的用户批准步骤
+
+## 目录映射
+
 写明 v0.2 目标映射：
 - inbox/：unreviewed correction candidates
 - records/errors/：tool_error / safety_block

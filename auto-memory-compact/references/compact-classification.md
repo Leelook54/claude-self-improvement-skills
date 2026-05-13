@@ -1,33 +1,33 @@
 # Compact Classification
 
-## Taxonomy
+## 分类
 
 ### keep
-Still valid, referenced, and useful. Keep in current location.
+仍然有效、被引用且有用的内容。保留在当前位置。
 
 ### move-to-topic
-Detailed content that belongs in a separate topic file. Extract and reference.
+属于独立 topic 文件的详细内容。提取并引用。
 
 ### merge-duplicate
-Redundant entries covering the same ground. Consolidate into one.
+覆盖相同领域的重复 entries。合并为一个。
 
 ### archive-stale
-Outdated, no longer applicable, or superseded entries. Archive.
+过时、不再适用或已被取代的 entries。Archive。
 
 ### reject-low-value
-Trivial, obvious, or one-off entries with no lasting value. Discard.
+微不足道、显而易见或一次性的 entries，无持续价值。Discard。
 
 ### contradiction-fix
-Entries that contradict each other. Flag for resolution.
+互相矛盾的 entries。标记待解决。
 
 ### promotion-candidate
-Entries that may deserve promotion to CLAUDE.md or skill. Flag for approval.
+可能值得 promotion 到 CLAUDE.md 或 skill 的 entries。标记待批准。
 
 ### skill-candidate
-Procedures or workflows worth extracting into a skill. Flag for skill creation.
+值得提取为 skill 的流程或工作流。标记待创建 skill。
 
 ### project-specific
-Entries relevant to only one project. Move to project-level memory.
+仅与一个项目相关的 entries。移至项目级 memory。
 
 ### global-behavior-candidate
-Cross-project behavioral rules. Consider for GLOBAL memory with approval.
+跨项目行为规则。在获得批准后考虑放入 GLOBAL memory。
