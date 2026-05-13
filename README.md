@@ -476,7 +476,7 @@ cp -R claude-self-improvement-skills/self-improvement-review ~/.claude/skills/
 **同步：**
 ```bash
 rsync -av --delete auto-memory-compact/ ~/.claude/skills/auto-memory-compact/
-rsync -av --delete self-improvement-review/ ~/.claude/skills/auto-improvement-review/
+rsync -av --delete self-improvement-review/ ~/.claude/skills/self-improvement-review/
 ```
 
 **警告**：不要对 `~/.claude/memory/` 使用 `rsync --delete`。
