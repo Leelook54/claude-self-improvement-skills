@@ -31,6 +31,10 @@ def inspect_memory(memory_path: str) -> dict:
         "target_structure_status": "unknown",
         "active_warning_count": 0,
         "archived_note_count": 0,
+        # PreCompact snapshot checks
+        "precompact_dir_exists": False,
+        "precompact_snapshots_count": 0,
+        "latest_precompact_snapshot": None,
     }
 
     if not path.exists():
@@ -127,6 +131,16 @@ def inspect_memory(memory_path: str) -> dict:
                     result["warnings"].append(f"default_load: true found in {rel_path}")
             except Exception:
                 pass
+
+    # PreCompact snapshot checks
+    precompact_path = path / "compact" / "precompact"
+    result["precompact_dir_exists"] = precompact_path.is_dir()
+    if precompact_path.is_dir():
+        snapshots = sorted(precompact_path.glob("*_precompact-snapshot.md"))
+        result["precompact_snapshots_count"] = len(snapshots)
+        if snapshots:
+            latest = snapshots[-1]
+            result["latest_precompact_snapshot"] = str(latest.relative_to(path))
 
     # Set counts
     result["active_warning_count"] = len(result["warnings"])
