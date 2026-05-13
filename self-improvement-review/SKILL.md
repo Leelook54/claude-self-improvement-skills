@@ -44,3 +44,7 @@ description: Analyze local self-improvement memory records, user corrections, to
 - Read `references/skill-extraction-policy.md` before proposing a new skill
 - Read `references/cache-hygiene-review.md` when reviewing default context and cache hit friendliness
 - Read `references/report-template.md` when writing review reports
+- Read `references/record-schema.md` for unified frontmatter and state machine
+- Read `references/pattern-lifecycle.md` for friction pattern detection and lifecycle
+- Read `references/do-not-remember-policy.md` before writing to long-term memory
+- Read `references/session-review-policy.md` for session transcript evidence extraction

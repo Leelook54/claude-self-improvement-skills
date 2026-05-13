@@ -40,3 +40,5 @@ description: Review and compact Claude Code auto memory and local self-improveme
 - `references/compact-classification.md` — Entry classification taxonomy
 - `references/cache-hygiene.md` — Cache stability and prompt-prefix checks
 - `references/output-formats.md` — Compact plan and report output formats
+- `references/compact-retention-policy.md` — Content governance, retention, and archive strategy
+- `references/dashboard-policy.md` — Dashboard content, line count, and update rules
