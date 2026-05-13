@@ -1,6 +1,6 @@
 # Compact Retention Policy
 
-## Purpose
+## 目的
 定义 memory 内容治理、保留、归档、摘要和 raw 文件移动策略。
 
 ## v0.2 Target Structure

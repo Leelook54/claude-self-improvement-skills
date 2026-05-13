@@ -1,6 +1,6 @@
 # Dashboard Policy
 
-## Purpose
+## 目的
 定义 SELF_IMPROVEMENT_DASHBOARD.md 的内容、行数、更新规则。
 
 ## Target File

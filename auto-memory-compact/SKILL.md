@@ -5,57 +5,57 @@ description: Review and compact Claude Code auto memory and local self-improveme
 
 # Auto Memory Compact
 
-## Purpose
+## 目的
 
-- Compact Claude Code auto memory safely
-- Keep MEMORY.md as a short index
-- Move detail to topic files or archive
-- Remove duplicate, stale, contradicted, or low-value memory
-- Generate review reports and cache hygiene checks
-- Do not promote anything into CLAUDE.md without explicit user approval
+- 安全压缩 Claude Code 自动内存
+- 保持 MEMORY.md 作为简短索引
+- 将详细内容移至 topic 文件或归档
+- 删除重复、过时、矛盾或低价值记忆
+- 生成审查报告和缓存健康检查
+- 未经用户明确批准不提升任何内容到 CLAUDE.md
 
-## PreCompact Snapshot Support
+## PreCompact Snapshot 支持
 
-Supports PreCompact hook for lightweight session state snapshots before context compression.
+支持 PreCompact hook 在上下文压缩前采集轻量级会话状态快照。
 
 - Policy: `references/precompact-policy.md`
 - Script: `scripts/precompact_snapshot.py`
 - Output: `~/.claude/memory/compact/precompact/`
-- Hook is NOT installed by default (v0.2 observation period)
+- Hook 默认未安装（v0.2 观察期）
 
-Snapshot ≠ compact execution. Snapshot only records payload fields; it does not run full review.
+Snapshot ≠ compact execution。Snapshot 仅记录 payload 字段，不运行完整审查。
 
-## Safety Rules
+## 安全规则
 
-- Do not write to global `~/.claude/CLAUDE.md`
-- Do not rewrite Claude Code auto MEMORY.md without a compact plan
-- Do not delete memory records by default; archive first
-- Do not treat records/ as active rules
-- Do not promote anything without explicit user approval
-- Do not merge topic files back into MEMORY.md
-- Do not scan records/ during normal work
+- 不写入全局 `~/.claude/CLAUDE.md`
+- 不生成压缩计划前不重写 Claude Code auto MEMORY.md
+- 默认不删除记忆记录；先归档
+- 不将 records/ 当作活动规则
+- 未经用户批准不提升任何内容
+- 不将 topic 文件合并回 MEMORY.md
+- 正常工作时不扫描 records/
 
-## Workflow
+## 工作流程
 
-1. Identify target memory paths
-2. Inspect MEMORY.md and topic files
-3. Classify entries
-4. Produce compact plan
-5. Ask for approval before applying modifications to Claude Code auto memory
-6. Apply only minimal safe changes after approval
-7. Generate compact report
+1. 识别目标记忆路径
+2. 检查 MEMORY.md 和 topic 文件
+3. 分类记忆条目
+4. 生成压缩计划
+5. 应用修改前请求用户批准
+6. 批准后仅执行最小安全变更
+7. 生成压缩报告
 
-## References
+## 参考文档
 
-- `references/auto-memory-safety.md` — Safety rules for modifying Claude Code auto memory
-- `references/compact-classification.md` — Entry classification taxonomy
-- `references/cache-hygiene.md` — Cache stability and prompt-prefix checks
-- `references/output-formats.md` — Compact plan and report output formats
-- `references/compact-retention-policy.md` — Content governance, retention, and archive strategy
-- `references/dashboard-policy.md` — Dashboard content, line count, and update rules
+- `references/auto-memory-safety.md` — 修改 Claude Code auto memory 的安全规则
+- `references/compact-classification.md` — 记忆条目分类法
+- `references/cache-hygiene.md` — 缓存稳定性和 prompt 前缀检查
+- `references/output-formats.md` — 压缩计划和报告输出格式
+- `references/compact-retention-policy.md` — 内容治理、保留和归档策略
+- `references/dashboard-policy.md` — Dashboard 内容、行数限制和更新规则
 
-## Scripts
+## 脚本
 
-- `scripts/inspect_memory.py` — Inspect memory structure (supports v0.2 checks)
-- `scripts/generate_dashboard.py` — Generate dashboard markdown (dry-run by default)
-- `scripts/retention_audit.py` — Read-only audit for file accumulation and overwrite risk
+- `scripts/inspect_memory.py` — 检查记忆结构（支持 v0.2 检查）
+- `scripts/generate_dashboard.py` — 生成 dashboard markdown（默认 dry-run）
+- `scripts/retention_audit.py` — 只读审计文件累积和覆盖风险

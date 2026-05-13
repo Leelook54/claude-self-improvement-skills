@@ -1,30 +1,30 @@
 # Auto Memory Safety
 
-## Core Principles
+## 核心原则
 
-Claude Code auto memory is managed by Claude Code. Respect its boundaries.
+Claude Code auto memory 由 Claude Code 管理。请尊重其边界。
 
-## Rules
+## 规则
 
-- The first 200 lines or 25KB may be loaded at session start
-- Topic files should stay separate and are read on demand
-- Never freely rewrite the entire auto MEMORY.md
-- Always generate a compact plan before changes
-- Prefer archive over delete
-- Preserve topic file references
-- Do not promote project memory to global CLAUDE.md
+- 前 200 行或 25KB 可在会话启动时加载
+- Topic 文件应保持独立，按需读取
+- 不自由重写整个 auto MEMORY.md
+- 修改前始终生成压缩计划
+- 优先归档而非删除
+- 保留 topic 文件引用
+- 不将项目记忆提升到全局 CLAUDE.md
 
-## Safe Actions
+## 安全操作
 
-- Read and analyze existing memory structure
-- Generate classification and compact plans
-- Archive low-value entries
-- Move duplicates to archive
-- Create topic files for detailed content
+- 读取和分析现有记忆结构
+- 生成分类和压缩计划
+- 归档低价值条目
+- 将重复条目移至归档
+- 为详细内容创建 topic 文件
 
-## Prohibited Actions
+## 禁止操作
 
-- Rewriting entire MEMORY.md without plan
-- Deleting records without archive
-- Promoting anything to CLAUDE.md without approval
-- Scanning records/ during normal tasks
+- 无计划重写整个 MEMORY.md
+- 不归档直接删除记录
+- 未经批准提升任何内容到 CLAUDE.md
+- 正常工作期间扫描 records/

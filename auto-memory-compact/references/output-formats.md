@@ -1,76 +1,76 @@
 # Output Formats
 
-## Compact Plan
+## 压缩计划格式
 
 ```markdown
-# Compact Plan
+# 压缩计划
 
-## Target Paths
+## 目标路径
 - `/path/to/memory/`
 
-## Files Inspected
-- `MEMORY.md` (XXX lines)
+## 已检查文件
+- `MEMORY.md` (XXX 行)
 - `topic-file-1.md`
 - `topic-file-2.md`
 
-## Proposed Changes
+## 提议变更
 
-| File | Action | Reason |
-|------|--------|--------|
-| entry-1 | archive-stale | outdated |
-| entry-2 | merge-duplicate | redundant |
-| entry-3 | keep | still valid |
+| 文件 | 操作 | 原因 |
+|------|------|------|
+| entry-1 | archive-stale | 过时 |
+| entry-2 | merge-duplicate | 重复 |
+| entry-3 | keep | 仍然有效 |
 
-## Risk Level
+## 风险等级
 [low / medium / high]
 
-## Requires Approval
+## 需要批准
 [yes / no]
 
-## Cache Hygiene Findings
-- [finding 1]
-- [finding 2]
+## 缓存健康发现
+- [发现 1]
+- [发现 2]
 
-## Before/After Line Counts
-- Before: XXX lines
-- After: YYY lines
+## 前后行数统计
+- 修改前: XXX 行
+- 修改后: YYY 行
 
-## Archived Files
+## 已归档文件
 - `archived-entry-1.md`
 
-## Rejected Low-Value Items
+## 已拒绝低价值条目
 - `rejected-entry-1.md`
 
-## Promotion Candidates
-- [candidate with reason]
+## 提升候选
+- [候选条目及原因]
 
-## Skill Candidates
-- [candidate with reason]
+## Skill 候选
+- [候选条目及原因]
 
-## Verification Result
-[TBD after approval]
+## 验证结果
+[批准后填写]
 ```
 
-## Compact Report
+## 压缩报告格式
 
 ```markdown
-# Compact Report
+# 压缩报告
 
-## Execution Summary
-- Executed: YYYY-MM-DD
-- Changes applied: [list]
+## 执行摘要
+- 执行时间: YYYY-MM-DD
+- 应用的变更: [列表]
 
-## Verification
-- MEMORY.md lines: [count]
-- Topic files: [count]
-- Archived: [count]
-- Rejected: [count]
-- Promoted: [count or none]
+## 验证
+- MEMORY.md 行数: [数量]
+- Topic 文件数: [数量]
+- 已归档: [数量]
+- 已拒绝: [数量]
+- 已提升: [数量或无]
 
-## Cache Hygiene
+## 缓存健康
 - [pass / warning / fail]
-- [details]
+- [详情]
 
-## Next Steps
-- [recommendations]
+## 下一步
+- [建议]
 ```

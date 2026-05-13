@@ -1,6 +1,6 @@
 # PreCompact Snapshot Policy
 
-## Purpose
+## 目的
 
 PreCompact snapshot 用于在 Claude Code 上下文压缩前采集会话状态快照，为后续回顾和决策提供轻量级 handoff 信息。
 
@@ -53,7 +53,7 @@ promote_requires_user_approval: true
 
 **Line Limit**: Content ≤80 lines (excluding frontmatter).
 
-## Forbidden Behavior
+## 禁止行为
 
 - Do not write to `~/.claude/CLAUDE.md`
 - Do not modify `MEMORY.md` or any memory index files
