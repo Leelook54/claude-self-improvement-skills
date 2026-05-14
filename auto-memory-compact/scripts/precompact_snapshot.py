@@ -9,7 +9,6 @@ from pathlib import Path
 
 
 DEFAULT_MEMORY_DIR = os.path.expanduser("~/.claude/memory")
-DEFAULT_OUTPUT_DIR = os.path.join(DEFAULT_MEMORY_DIR, "compact", "precompact")
 
 
 def read_stdin():
@@ -129,17 +128,35 @@ def write_snapshot(content_lines: list, output_dir: str, dry_run: bool = False) 
     return filepath
 
 
+def derive_memory_dir(args_memory_dir: str = None) -> str:
+    """Derive memory directory with priority: explicit arg > CLAUDE_MEMORY_DIR env > DEFAULT."""
+    if args_memory_dir:
+        return os.path.expanduser(args_memory_dir)
+    if "CLAUDE_MEMORY_DIR" in os.environ:
+        return os.environ["CLAUDE_MEMORY_DIR"]
+    return DEFAULT_MEMORY_DIR
+
+
 def main():
     """Main entry point."""
     dry_run = "--dry-run" in sys.argv
-    memory_dir = DEFAULT_MEMORY_DIR
-    output_dir = DEFAULT_OUTPUT_DIR
+    args_memory_dir = None
+    explicit_output_dir = None
 
     for i, arg in enumerate(sys.argv):
         if arg == "--memory-dir" and i + 1 < len(sys.argv):
-            memory_dir = sys.argv[i + 1]
+            args_memory_dir = sys.argv[i + 1]
         if arg == "--output-dir" and i + 1 < len(sys.argv):
-            output_dir = sys.argv[i + 1]
+            explicit_output_dir = sys.argv[i + 1]
+
+    # Derive memory_dir from args/env/fallback
+    memory_dir = derive_memory_dir(args_memory_dir)
+
+    # output_dir: explicit --output-dir takes priority, else derive from memory_dir
+    if explicit_output_dir:
+        output_dir = os.path.expanduser(explicit_output_dir)
+    else:
+        output_dir = os.path.join(memory_dir, "compact", "precompact")
 
     # Read stdin
     payload = read_stdin()
