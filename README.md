@@ -8,6 +8,10 @@
 - 保存两个 skill 本体（`auto-memory-compact` 和 `self-improvement-review`）
 - 版本化管理 skill 定义
 
+**相关仓库：**
+- **Plugin guard**（CLAUDE.md 写保护、PreToolUse hook）：[claude-memory-guardian](https://github.com/Leelook54/claude-memory-guardian)
+- 本仓库不再维护 hooks / plugin guard 相关代码
+
 **不在本仓库：**
 - Runtime evidence（运行产物位于 `~/.claude/memory/`）
 - `records/`、`archive/`、`inbox/`、`compact/`
@@ -34,6 +38,10 @@
     <tr>
       <td>状态</td>
       <td>结构稳定，已通过 smoke test，进入真实使用观察期</td>
+    </tr>
+    <tr>
+      <td>Plugin 迁移</td>
+      <td>plugin 版本已迁移至 <a href="https://github.com/Leelook54/claude-memory-guardian">claude-memory-guardian</a>，不再在本仓库维护 hooks / plugin guard</td>
     </tr>
   </tbody>
 </table>
