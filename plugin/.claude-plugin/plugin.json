@@ -1,0 +1,8 @@
+{
+  "name": "self-improvement-memory",
+  "version": "0.3.0",
+  "description": "中文优先的 Claude Code 自改进记忆治理插件，包含 memory review、compact、retention、session discovery 和 CLAUDE.md/settings 写入保护。",
+  "author": {
+    "name": "Leelook54"
+  }
+}
